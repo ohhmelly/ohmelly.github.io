@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Colorado EHR System - Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #1a5490 0%, #2c7be5 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            max-width: 800px;
+            width: 100%;
+            padding: 40px;
+        }
+        h1 {
+            color: #1a5490;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .status {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+        .info-box {
+            background: #f8f9fa;
+            border-left: 4px solid #1a5490;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .feature-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .feature {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+        }
+        .feature h3 {
+            color: #1a5490;
+            font-size: 1rem;
+            margin-bottom: 5px;
+        }
+        .api-test {
+            background: #000;
+            color: #0f0;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            margin: 20px 0;
+            font-size: 0.9rem;
+            overflow-x: auto;
+        }
+        button {
+            background: #1a5490;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin: 5px;
+        }
+        button:hover {
+            background: #144278;
+        }
+        #result {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏥 Colorado EHR System</h1>
+        <p class="subtitle">Electronic Health Records with Integrated Billing</p>
+
+        <div class="status">
+            ✅ <strong>System Status:</strong> Both Backend (Port 5000) and Frontend (Port 3000) are running successfully!
+        </div>
+
+        <div class="info-box">
+            <h2>📋 Quick Start</h2>
+            <p><strong>To access the full web interface:</strong></p>
+            <ol style="margin-left: 20px; margin-top: 10px;">
+                <li>Look for the <strong>PORTS</strong> tab at the bottom of your screen</li>
+                <li>Find <strong>port 3000</strong> in the list</li>
+                <li>Click the <strong>globe icon 🌐</strong> next to it</li>
+            </ol>
+            <p style="margin-top: 15px;"><strong>Login credentials:</strong></p>
+            <ul style="margin-left: 20px;">
+                <li>Email: <code>doctor@test.com</code></li>
+                <li>Password: <code>test123</code></li>
+            </ul>
+        </div>
+
+        <h2>🏥 System Features</h2>
+        <div class="feature-list">
+            <div class="feature">
+                <h3>👥 Patient Management</h3>
+                <p>Complete demographics, insurance, medical history</p>
+            </div>
+            <div class="feature">
+                <h3>📅 Scheduling</h3>
+                <p>Appointments with telehealth support</p>
+            </div>
+            <div class="feature">
+                <h3>📋 Medical Records</h3>
+                <p>SOAP notes, ICD-10, CPT coding</p>
+            </div>
+            <div class="feature">
+                <h3>💰 Billing</h3>
+                <p>Claims, Colorado Medicaid, EDI</p>
+            </div>
+            <div class="feature">
+                <h3>📊 Reporting</h3>
+                <p>CIIS, PDMP, quality metrics</p>
+            </div>
+            <div class="feature">
+                <h3>🔒 HIPAA Compliant</h3>
+                <p>256-bit encryption, audit trails</p>
+            </div>
+        </div>
+
+        <h2>🧪 Test the API</h2>
+        <p>Click the buttons below to test the backend API:</p>
+
+        <div>
+            <button onclick="testHealth()">Test Health Check</button>
+            <button onclick="testLogin()">Test Login</button>
+            <button onclick="testCreatePatient()">Create Test Patient</button>
+        </div>
+
+        <div id="result"></div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:5000/api';
+        let authToken = '';
+
+        async function testHealth() {
+            const result = document.getElementById('result');
+            result.innerHTML = '<div class="api-test">Testing health endpoint...</div>';
+
+            try {
+                const response = await fetch(`${API_URL}/health`);
+                const data = await response.json();
+                result.innerHTML = `<div class="api-test">✅ Health Check Successful!\n\n${JSON.stringify(data, null, 2)}</div>`;
+            } catch (error) {
+                result.innerHTML = `<div class="api-test" style="color: #f00;">❌ Error: ${error.message}\n\nMake sure the backend is running on port 5000</div>`;
+            }
+        }
+
+        async function testLogin() {
+            const result = document.getElementById('result');
+            result.innerHTML = '<div class="api-test">Logging in as doctor@test.com...</div>';
+
+            try {
+                const response = await fetch(`${API_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: 'doctor@test.com',
+                        password: 'test123'
+                    })
+                });
+                const data = await response.json();
+
+                if (data.token) {
+                    authToken = data.token;
+                    result.innerHTML = `<div class="api-test">✅ Login Successful!\n\nUser: ${data.user.firstName} ${data.user.lastName}\nRole: ${data.user.role}\nToken: ${data.token.substring(0, 50)}...</div>`;
+                } else {
+                    result.innerHTML = `<div class="api-test" style="color: #ff0;">⚠️ ${data.error || 'Login failed'}</div>`;
+                }
+            } catch (error) {
+                result.innerHTML = `<div class="api-test" style="color: #f00;">❌ Error: ${error.message}</div>`;
+            }
+        }
+
+        async function testCreatePatient() {
+            if (!authToken) {
+                alert('Please login first!');
+                return testLogin();
+            }
+
+            const result = document.getElementById('result');
+            result.innerHTML = '<div class="api-test">Creating patient...</div>';
+
+            try {
+                const response = await fetch(`${API_URL}/patients`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({
+                        firstName: 'Test',
+                        lastName: 'Patient',
+                        dateOfBirth: '1990-01-01',
+                        gender: 'Male',
+                        phone: '(303) 555-9999',
+                        email: 'test.patient@example.com',
+                        address: {
+                            street: '123 Test St',
+                            city: 'Denver',
+                            state: 'Colorado',
+                            zipCode: '80202'
+                        }
+                    })
+                });
+                const data = await response.json();
+
+                if (data.patient) {
+                    result.innerHTML = `<div class="api-test">✅ Patient Created!\n\nName: ${data.patient.firstName} ${data.patient.lastName}\nMRN: ${data.patient.mrn}\nDate of Birth: ${data.patient.dateOfBirth}\nAddress: ${data.patient.address.street}, ${data.patient.address.city}</div>`;
+                } else {
+                    result.innerHTML = `<div class="api-test" style="color: #ff0;">⚠️ ${data.error || 'Failed to create patient'}</div>`;
+                }
+            } catch (error) {
+                result.innerHTML = `<div class="api-test" style="color: #f00;">❌ Error: ${error.message}</div>`;
+            }
+        }
+
+        // Auto-test on load
+        window.onload = () => {
+            testHealth();
+        };
+    </script>
+</body>
+</html>
